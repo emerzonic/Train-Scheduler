@@ -1,71 +1,81 @@
-
-  // Initialize Firebase
+// Initialize Firebase
   var config = {
     apiKey: "AIzaSyBtaaLITySicGxoa6MnDWPfu_QQHknDO1U",
     authDomain: "train-scheduler-5a98c.firebaseapp.com",
     databaseURL: "https://train-scheduler-5a98c.firebaseio.com",
     projectId: "train-scheduler-5a98c",
-    storageBucket: "",
+    storageBucket: "train-scheduler-5a98c.appspot.com",
     messagingSenderId: "888490728078"
   };
 
   firebase.initializeApp(config);
 
 var database = firebase.database();
-var myref = database.ref('trans');
+var trainsDatabase = database.ref('trains');
 
 //global veriables to hold input data
 var trainName;
 var destination;
 var frequency;
-var time;
-var nextArrival;
-var minutesAway;
+var firstTime;
+
+retrieveData();
 
 //to retrieve data from the data base, the change value, the getData function retrieve
-//and display data in the table. If error the error function displays error
- myref.on("value", getData, error); 
+function retrieveData(){
+trainsDatabase.on("value", getData, error); 
+}
 
-
-// Whenever a user submits new train info
-$("#submit").on("click", function(event) {
+// click listener to add train
+$('#submit').on('click', function(event) {
     event.preventDefault();
     //retrieve the value from the input fields
     trainName = $("#input_trainName").val().trim();
     destination = $("#input_destination").val().trim();
-    time = $("#input_time").val().trim();
+    firstTime = $("#input_time").val().trim();
     frequency = $("#input_freq").val().trim();
 
+    $( '.alert' ).addClass('alert-success').text( 'Train was successfully added!' ).show().fadeOut( 7000, function(){
+        $('.alert').removeClass('alert-success').text('');
+    });
     //create an object to hold the data
     var data =  {
         TrainName: trainName,
         Destination: destination,
         Frequency:frequency,
-        NextArrival:time,
-  };
+        firstTime:firstTime,
+    };
     //push the data into the database
-    myref.push(data);
+    trainsDatabase.push(data);
+
+    //clear input fields and focus train name input field
+    $("input").val('');
+    $("#input_trainName").focus();
+    return false;
   });
   
 //this function retrieve and display the data from the database
 function getData(data){
-    //empty the table each time there is an update
     $('tbody').empty();
-    var trans = data.val();
-    var keys = Object.keys(trans);
-    // keys.forEach(function() {  });
+    var trains = data.val();
+    var keys = Object.keys(trains);
     for (var i = 0; i < keys.length; i++) {
         var k = keys[i];
-        //create a table row and save it in a list variable
-        var list = '<tr>' +
-                    '<td id="table_trainName">'+ trans[k].TrainName +'</td>' +
-                        '<td id="table_destination">'+ trans[k].Destination  +'</td>' + 
-                        '<td id="table_freq">'+ trans[k].Frequency  +'</td>' +
-                        '<td id="table_time">'+ trans[k].NextArrival  +'</td>' +
-                        //  '<td id="table_minutesAway">'+ trains[key].TrainName  +'</td>' +
-                    '</tr>';
-        //prepend the list to the table today
-        $('tbody').prepend(list);     
+    var firstTimeConverted = moment(trains[k].firstTime, "HH:mm").subtract(1, "years");
+    var currentTime = moment();
+    $('#time').text('Current Time ' + currentTime.format('LT'));
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    var tRemainder = diffTime % trains[k].Frequency;
+    minutesAway = trains[k].Frequency - tRemainder;
+    nextArrival = moment().add(minutesAway, "minutes");
+    var tableRow = `<tr data-key="${k}"> 
+                        <td>${trains[k].TrainName}</td>
+                        <td>${trains[k].Destination}</td>
+                        <td>${trains[k].Frequency}</td>
+                        <td>${nextArrival.format("LT")}</td>
+                        <td>${minutesAway}</td>
+                        </tr>`;
+        $('tbody').prepend(tableRow);     
     }  
 }
 
@@ -73,3 +83,15 @@ function getData(data){
 function error(errorObject){
     console.log("The read failed: " + errorObject.code); 
 }
+
+//toggle text content on add train form   
+$('#toggle').click(function () {
+    var btn = $(this);
+    if ($(btn).text() == "Add Train") {
+        $(btn).text("Close Form");
+    } else {
+        $(btn).text("Add Train");
+    }
+});
+
+setInterval(retrieveData,60000);

@@ -7,65 +7,97 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
         crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
     <title>Train Scheduler</title>
 </head>
 
 <body>
-    <div class="container">
-        <div class="jumbotron text-center bg-secondary py-1">
-            <h1 class="display-4  text-light">Train Scheduler</h1>
-            <p class="lead  text-light">Check the time for your schedule.</p>
 
-        </div>
+    <div class="jumbotron text-center py-2">
+        <h1 class="text-primary ont-weight-bold">Train Scheduler</h1>
+        <p>Check the time for your schedule.</p>
     </div>
-
     <div class="container">
-        <h3 class="bg-primary text-light">Train Schedule</h3>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Train Name</th>
-                    <th scope="col">Destination</th>
-                    <th scope="col">Frequency</th>
-                    <th scope="col">Next Arrival</th>
-                    <th scope="col">Minutes Away</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td id="table_trainName"></td>
-                    <td id="table_destination"></td>
-                    <td id="table_freq"></td>
-                    <td id="table_time"></td>
-                    <td id="table_minutesAway"></td>
-                </tr>
-            </tbody>
-        </table>
-        <h3 class="bg-primary text-light">Train Submission</h3>
-        <form>
-            <div class="form-group">
-                <label for="formGroupExampleInput">Train Name</label>
-                <input id="input_trainName" type="text" class="form-control" id="formGroupExampleInput" placeholder=" ">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xm-12">
+                <h3 class="bg-warning text-primary text-center">Current Train Schedule</h3>
             </div>
-            <div class="form-group">
-                <label for="formGroupExampleInput2">Destination</label>
-                <input id="input_destination" type="text" class="form-control" id="formGroupExampleInput2" placeholder=" ">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xm-12">
+                <h3 id="time" class="bg-warning text-primary text-center">3:00AM</h3>
             </div>
-            <div class="form-group">
-                <label for="formGroupExampleInput2">First Train Time</label>
-                <input id="input_time" type="text" class="form-control" id="formGroupExampleInput2" placeholder=" ">
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="tableDiv table-responsive">
+                    <table class="table table-striped">
+                        <thead class="bg-primary text-light">
+                            <tr>
+                                <!-- <th scope="col">Edit/Delete</th> -->
+                                <th scope="col">Train Name</th>
+                                <th scope="col">Destination</th>
+                                <th scope="col">Frequency (Min)</th>
+                                <th scope="col">Next Arrival</th>
+                                <th scope="col">Minutes Away</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Train schedule goes here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="accordion" id="accordion">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <button id="toggle" class="btn btn-lg btn-primary" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                aria-controls="collapseOne">
+                                Close Form
+                            </button>
+                            <div class="alert d-inline" role="alert">
 
-            <div class="form-group">
-                <label for="formGroupExampleInput2">Frequency</label>
-                <input id="input_freq" type="text" class="form-control" id="formGroupExampleInput2" placeholder=" ">
+
+                            </div>
+                        </div>
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body clearfix">
+                                <form class="main-form needs-validation">
+                                    <div class="form-group">
+                                        <label>Train Name</label>
+                                        <input id="input_trainName" type="text" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Destination</label>
+                                        <input id="input_destination" type="text" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>First Train Time</label>
+                                        <input id="input_time" type="time" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Frequency (Minutes)</label>
+                                        <input id="input_freq" type="number" class="form-control" required>
+                                    </div>
+                                    <button id="submit" type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button id="submit" type="submit" class="btn btn-primary">Submit</button>
-        </form>
+        </div>
+        <div class="clear"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
         crossorigin="anonymous"></script>
     <script type="text/javascript" src="assets/javascript/app.js"></script>
 </body>
