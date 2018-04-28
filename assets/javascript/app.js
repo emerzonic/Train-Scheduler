@@ -61,20 +61,20 @@ function getData(data){
     var keys = Object.keys(trains);
     for (var i = 0; i < keys.length; i++) {
         var k = keys[i];
-    var firstTimeConverted = moment(trains[k].firstTime, "HH:mm").subtract(1, "years");
-    var currentTime = moment();
-    $('#time').text('Current Time ' + currentTime.format('LT'));
-    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
-    var tRemainder = diffTime % trains[k].Frequency;
-    minutesAway = trains[k].Frequency - tRemainder;
-    nextArrival = moment().add(minutesAway, "minutes");
-    var tableRow = `<tr data-key="${k}"> 
-                        <td>${trains[k].TrainName}</td>
-                        <td>${trains[k].Destination}</td>
-                        <td>${trains[k].Frequency}</td>
-                        <td>${nextArrival.format("LT")}</td>
-                        <td>${minutesAway}</td>
-                        </tr>`;
+        var firstTimeConverted = moment(trains[k].firstTime, "HH:mm").subtract(1, "years");
+        var currentTime = moment();
+        $('#time').text('Current Time ' + currentTime.format('LT'));
+        var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+        var tRemainder = diffTime % trains[k].Frequency;
+        minutesAway = trains[k].Frequency - tRemainder;
+        nextArrival = moment().add(minutesAway, "minutes");
+        var tableRow = `<tr data-key="${k}"> 
+                            <td>${trains[k].TrainName}</td>
+                            <td>${trains[k].Destination}</td>
+                            <td>${trains[k].Frequency}</td>
+                            <td>${nextArrival.format("LT")}</td>
+                            <td>${minutesAway}</td>
+                            </tr>`;
         $('tbody').prepend(tableRow);     
     }  
 }
@@ -95,3 +95,6 @@ $('#toggle').click(function () {
 });
 
 setInterval(retrieveData,60000);
+
+
+
